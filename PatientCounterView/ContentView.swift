@@ -6,16 +6,48 @@
 //
 
 import SwiftUI
+import Observation
+
+@Observable
+class CounterViewModel {
+    var count: Int = 0
+    var label: String = "Klick"
+
+    func increment() {
+        count += 1
+    }
+}
 
 struct ContentView: View {
+    var viewModel = CounterViewModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("Räknare: \(viewModel.count)")
+                    .font(.largeTitle)
+
+                Button("Öka") {
+                    viewModel.increment()
+                }
+                .buttonStyle(.borderedProminent)
+
+                NavigationLink("Redigera label") {
+                    EditLabelView(viewModel: viewModel)
+                }
+            }
+            .navigationTitle(viewModel.label)
         }
-        .padding()
+    }
+}
+
+struct EditLabelView: View {
+    @Bindable var viewModel: CounterViewModel
+
+    var body: some View {
+        Form {
+            TextField("Label", text: $viewModel.label)
+        }
     }
 }
 
